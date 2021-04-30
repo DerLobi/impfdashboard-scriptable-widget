@@ -1,8 +1,8 @@
 {
     "$schema": "https://vega.github.io/schema/vega/v5.json",
     "description": "Number of vaccine doses for the last 7 days",
-    "width": 200,
-    "height": 40,
+    "width": 400,
+    "height": 60,
     "padding": 0,
   
     "data": [

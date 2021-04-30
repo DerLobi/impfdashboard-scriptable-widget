@@ -12,8 +12,8 @@ module.exports = function (weeklyData, completion) {
   });
 
   var view = new vega.View(vega.parse(chartSpec))
-    .renderer("none")
-    // .renderer('canvas')
+    // .renderer("none")
+    .renderer('canvas')
     .initialize();
 
   view

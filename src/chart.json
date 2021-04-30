@@ -30,7 +30,7 @@
     ],
   
     "axes": [
-      { "orient": "bottom", "scale": "xscale" }
+      { "orient": "bottom", "scale": "xscale", "labelColor": "#808080" }
     ],
   
     "marks": [
@@ -55,7 +55,6 @@
           "enter": {
             "align": {"value": "center"},
             "baseline": {"value": "bottom"},
-            "fill": {"value": "#808080"},
             "fontSize": {"value": 16 }
           }
         }

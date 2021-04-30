@@ -21,10 +21,12 @@ module.exports = function (weeklyData, completion) {
     .then(function (canvas) {
       console.log("Writing PNG to file...");
       fs.writeFileSync("./data/barChart.png", canvas.toBuffer());
+      completion()
     })
     .catch(function (err) {
       console.log("Error writing PNG to file:");
       console.error(err);
+      completion(err)
     });
 };
 

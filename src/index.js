@@ -1,8 +1,19 @@
-let downloadData = require('./downloadData.js')
-let createChart = require('./createChart.js')
+const downloadData = require('./downloadData.js')
+const createChart = require('./createChart.js')
+const core = require('@actions/core');
 
-downloadData(function(weeklyData) {
-    createChart(weeklyData, function() {
+downloadData(function(weeklyData, error) {
+
+    if(error) {        
+        core.setFailed(error.message);
+        return
+    }
+
+    createChart(weeklyData, function(error) {
+        if(error) {
+            core.setFailed(error.message);
+            return
+        }
         console.log("done")
     })
 })

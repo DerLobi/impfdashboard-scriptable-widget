@@ -29,6 +29,7 @@ module.exports = function (completion) {
   // Catch any error
   parser.on("error", function (err) {
     console.error(err.message);
+    completion(null, err)
   });
 
   parser.on("end", function () {
@@ -36,9 +37,10 @@ module.exports = function (completion) {
     // console.log(lastWeek)
     try {
       fs.writeFileSync("./data/data.json", JSON.stringify(lastWeek));
-      completion(lastWeek);
+      completion(lastWeek, null);
     } catch (err) {
       console.error(err);
+      completion(null, err)
     }
   });
 

@@ -15,5 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install dependencies
+        run: sudo apt-get install -y libxml2-utils && npm install        
       - name: Generate Data
         uses: ./
+        

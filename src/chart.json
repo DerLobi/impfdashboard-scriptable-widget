@@ -55,7 +55,7 @@
           "enter": {
             "align": {"value": "center"},
             "baseline": {"value": "bottom"},
-            "fontSize": {"value": 16 }
+            "fontSize": {"value": 20 }
           }
         }
       }

@@ -1,4 +1,5 @@
 const vega = require('vega');
+const sharp = require("sharp");
 const fs = require("fs");
 
 module.exports = function (weeklyData, completion) {
@@ -16,12 +17,12 @@ module.exports = function (weeklyData, completion) {
     // .renderer('canvas')
     .initialize();
 
-  view
-    .toCanvas()
-    .then(function (canvas) {
+    view.toSVG().then(async function (svg) {
       console.log("Writing PNG to file...");
-      fs.writeFileSync("./data/barChart.png", canvas.toBuffer());
-      completion()
+      await sharp(Buffer.from(svg))
+          .toFormat('png')
+          .toFile('./data/barChart.png')
+          completion()
     })
     .catch(function (err) {
       console.log("Error writing PNG to file:");

@@ -2,7 +2,7 @@
     "$schema": "https://vega.github.io/schema/vega/v5.json",
     "description": "Number of vaccine doses for the last 7 days",
     "width": 400,
-    "height": 60,
+    "height": 80,
     "padding": 0,
   
     "data": [
@@ -46,9 +46,6 @@
           },
           "update": {
             "fill": {"value": "#9DCCE5"}
-          },
-          "hover": {
-            "fill": {"value": "red"}
           }
         }
       },
@@ -58,7 +55,8 @@
           "enter": {
             "align": {"value": "center"},
             "baseline": {"value": "bottom"},
-            "fill": {"value": "#333"}
+            "fill": {"value": "#808080"},
+            "fontSize": {"value": 16 }
           }
         }
       }

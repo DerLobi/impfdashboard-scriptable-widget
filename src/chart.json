@@ -1,0 +1,67 @@
+{
+    "$schema": "https://vega.github.io/schema/vega/v5.json",
+    "description": "Number of vaccine doses for the last 7 days",
+    "width": 200,
+    "height": 40,
+    "padding": 0,
+  
+    "data": [
+      {
+        "name": "table",
+        "values": [
+        ]
+      }
+    ],
+    "scales": [
+      {
+        "name": "xscale",
+        "type": "band",
+        "domain": {"data": "table", "field": "weekDay"},
+        "range": "width",
+        "padding": 0.05,
+        "round": true
+      },
+      {
+        "name": "yscale",
+        "domain": {"data": "table", "field": "numberOfDoses"},
+        "nice": true,
+        "range": "height"
+      }
+    ],
+  
+    "axes": [
+      { "orient": "bottom", "scale": "xscale" }
+    ],
+  
+    "marks": [
+      {
+        "type": "rect",
+        "from": {"data":"table"},
+        "encode": {
+          "enter": {
+            "x": {"scale": "xscale", "field": "weekDay"},
+            "width": {"scale": "xscale", "band": 1},
+            "y": {"scale": "yscale", "field": "numberOfDoses"},
+            "y2": {"scale": "yscale", "value": 0}
+          },
+          "update": {
+            "fill": {"value": "#9DCCE5"}
+          },
+          "hover": {
+            "fill": {"value": "red"}
+          }
+        }
+      },
+      {
+        "type": "text",
+        "encode": {
+          "enter": {
+            "align": {"value": "center"},
+            "baseline": {"value": "bottom"},
+            "fill": {"value": "#333"}
+          }
+        }
+      }
+    ]
+  }
+  

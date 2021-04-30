@@ -1,0 +1,5 @@
+name: 'Convert Impfdashboard data'
+description: 'Greet someone and record the time'
+runs:
+  using: 'node12'
+  main: 'src/index.js'

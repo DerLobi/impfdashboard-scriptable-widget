@@ -1,0 +1,27 @@
+{
+  "name": "impfdashboard-scriptable-widget",
+  "version": "1.0.0",
+  "description": "An action that downloads data from impfdashboard.com and converts it so that the corresponding Scriptable widget can display it.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DerLobi/impfdashboard-scriptable-widget.git"
+  },
+  "keywords": [],
+  "author": "Christian Lobach",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DerLobi/impfdashboard-scriptable-widget/issues"
+  },
+  "homepage": "https://github.com/DerLobi/impfdashboard-scriptable-widget#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.7",
+    "@actions/github": "^4.0.0",
+    "canvas": "^2.7.0",
+    "csv-parse": "^4.15.4",
+    "vega": "^5.20.2"
+  }
+}

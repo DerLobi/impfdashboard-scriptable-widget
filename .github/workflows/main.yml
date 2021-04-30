@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install dependencies
-        run: npm install -g canvas      
+        run: sudo npm install -g canvas      
       - name: Generate Data
         uses: ./
         

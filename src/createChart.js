@@ -1,58 +1,51 @@
 const vega = require('vega');
-const sharp = require("sharp");
-const fs = require("fs");
-
-module.exports = function (dailyData, sizeCategory, filePath, completion) {
-  let chartSpec = require("./chart.json");
-
-  chartSpec.data[0].values = dailyData.map((record) => {
-    return {      
-      weekDay: weekdayFromDate(record.date, sizeCategory),
-      numberOfDoses: record.dosen_differenz_zum_vortag,
-    };
-  });
-
-  const size = sizes[sizeCategory]
-  chartSpec.width = size.width
-  chartSpec.height = size.height
-
-  var view = new vega.View(vega.parse(chartSpec))
-    .renderer("none")    
-    .initialize();
-
-    view.toSVG().then(async function (svg) {      
-      await sharp(Buffer.from(svg))
-          .toFormat('png')
-          .toFile(filePath)
-          completion()
-    })
-    .catch(function (err) {
-      console.log("Error writing PNG to file:");
-      console.error(err);
-      completion(err)
-    });
-};
+const sharp = require('sharp');
+const chartSpec = require('./chart.json');
 
 function weekdayFromDate(dateString, sizeCategory) {
-
-  const options = sizeCategory == "large" ? { weekday: "short", day: 'numeric', month: 'numeric' } : { weekday: "short" }
+  const options = sizeCategory === 'large' ? { weekday: 'short', day: 'numeric', month: 'numeric' } : { weekday: 'short' };
 
   const weekday = new Date(dateString)
-    .toLocaleString("de-DE", options)    
+    .toLocaleString('de-DE', options);
   return weekday;
 }
 
 const sizes = {
-  "small": {
+  small: {
     width: 400,
-    height: 80
+    height: 80,
   },
-  "medium": {
+  medium: {
     width: 400,
-    height: 200
+    height: 200,
   },
-  "large": {
+  large: {
     width: 800,
-    height: 400
-  }
-}
+    height: 400,
+  },
+};
+
+module.exports = function createChart(dailyData, sizeCategory, filePath, completion) {
+  chartSpec.data[0].values = dailyData.map((record) => ({
+    weekDay: weekdayFromDate(record.date, sizeCategory),
+    numberOfDoses: record.dosen_differenz_zum_vortag,
+  }));
+
+  const size = sizes[sizeCategory];
+  chartSpec.width = size.width;
+  chartSpec.height = size.height;
+
+  const view = new vega.View(vega.parse(chartSpec))
+    .renderer('none')
+    .initialize();
+
+  view.toSVG().then(async (svg) => {
+    await sharp(Buffer.from(svg))
+      .toFormat('png')
+      .toFile(filePath);
+    completion();
+  })
+    .catch((err) => {
+      completion(err);
+    });
+};

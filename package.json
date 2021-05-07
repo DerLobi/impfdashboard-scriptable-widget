@@ -22,5 +22,10 @@
     "csv-parse": "^4.15.4",
     "sharp": "^0.28.1",
     "vega": "^5.20.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.25.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
   }
 }

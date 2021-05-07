@@ -2,26 +2,28 @@ const vega = require('vega');
 const sharp = require("sharp");
 const fs = require("fs");
 
-module.exports = function (weeklyData, completion) {
+module.exports = function (dailyData, sizeCategory, filePath, completion) {
   let chartSpec = require("./chart.json");
 
-  chartSpec.data[0].values = weeklyData.map((record) => {
-    return {
-      weekDay: weekdayFromDate(record.date),
+  chartSpec.data[0].values = dailyData.map((record) => {
+    return {      
+      weekDay: weekdayFromDate(record.date, sizeCategory),
       numberOfDoses: record.dosen_differenz_zum_vortag,
     };
   });
 
+  const size = sizes[sizeCategory]
+  chartSpec.width = size.width
+  chartSpec.height = size.height
+
   var view = new vega.View(vega.parse(chartSpec))
-    .renderer("none")
-    // .renderer('canvas')
+    .renderer("none")    
     .initialize();
 
-    view.toSVG().then(async function (svg) {
-      console.log("Writing PNG to file...");
+    view.toSVG().then(async function (svg) {      
       await sharp(Buffer.from(svg))
           .toFormat('png')
-          .toFile('./data/barChart.png')
+          .toFile(filePath)
           completion()
     })
     .catch(function (err) {
@@ -31,9 +33,26 @@ module.exports = function (weeklyData, completion) {
     });
 };
 
-function weekdayFromDate(dateString) {
+function weekdayFromDate(dateString, sizeCategory) {
+
+  const options = sizeCategory == "large" ? { weekday: "short", day: 'numeric', month: 'numeric' } : { weekday: "short" }
+
   const weekday = new Date(dateString)
-    .toLocaleString("de-DE", { weekday: "short" })
-    .toUpperCase();
+    .toLocaleString("de-DE", options)    
   return weekday;
+}
+
+const sizes = {
+  "small": {
+    width: 400,
+    height: 80
+  },
+  "medium": {
+    width: 400,
+    height: 200
+  },
+  "large": {
+    width: 800,
+    height: 400
+  }
 }

@@ -4,14 +4,13 @@ const parse = require("csv-parse");
 
 module.exports = function (completion) {
   const output = [];
-  // Create the parser
+
   const parser = parse({
     columns: true,
     skip_empty_lines: true,
     delimiter: "\t",
   });
 
-  // Use the readable stream api
   parser.on("readable", function () {
     let record;
     while ((record = parser.read())) {
@@ -26,18 +25,17 @@ module.exports = function (completion) {
       });
     }
   });
-  // Catch any error
+  
   parser.on("error", function (err) {
     console.error(err.message);
     completion(null, err)
   });
 
   parser.on("end", function () {
-    const lastWeek = output.slice(output.length - 7, output.length);
-    // console.log(lastWeek)
+    const lastTwoWeeks = output.slice(output.length - 14, output.length);    
     try {
-      fs.writeFileSync("./data/data.json", JSON.stringify(lastWeek));
-      completion(lastWeek, null);
+      fs.writeFileSync("./data/data.json", JSON.stringify(lastTwoWeeks));
+      completion(lastTwoWeeks, null);
     } catch (err) {
       console.error(err);
       completion(null, err)

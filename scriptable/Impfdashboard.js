@@ -26,6 +26,7 @@
 // SOFTWARE.
 
 let widget = new ListWidget();
+const locale = Device.locale
 const horizontalPadding = 12;
 const verticalPadding = 8;
 widget.setPadding(verticalPadding, 0, verticalPadding, 0);
@@ -88,7 +89,7 @@ async function loadData() {
   let data = {
     firstVaccinations: {
       title: "Mindestens\nErstgeimpfte",
-      stringValue: lastRecord.impf_quote_erst.toLocaleString(undefined, {
+      stringValue: lastRecord.impf_quote_erst.toLocaleString(locale, {
         style: "percent",
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
@@ -96,14 +97,14 @@ async function loadData() {
     },
     fullVaccinations: {
       title: "Vollständig\nGeimpfte",
-      stringValue: lastRecord.impf_quote_voll.toLocaleString(undefined, {
+      stringValue: lastRecord.impf_quote_voll.toLocaleString(locale, {
         style: "percent",
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
       }),
     },
     dosesToday: {
-      title: new Date(lastRecord.date).toLocaleString("de-DE", {
+      title: new Date(lastRecord.date).toLocaleString(locale, {
         weekday: "long",
         year: "2-digit",
         month: "numeric",

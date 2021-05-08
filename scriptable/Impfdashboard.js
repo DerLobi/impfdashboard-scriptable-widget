@@ -29,54 +29,96 @@ const widget = new ListWidget();
 const { locale } = Device;
 const horizontalPadding = 12;
 const verticalPadding = 8;
-widget.setPadding(verticalPadding, 0, verticalPadding, 0);
+
+const titleFont = Font.mediumSystemFont( config.widgetFamily == "large" ? 16 : 10 )
+const valueFont = Font.mediumSystemFont( config.widgetFamily == "large" ? 22 : 16 )
+
+widget.setPadding(verticalPadding, horizontalPadding, verticalPadding, horizontalPadding);
 widget.url = 'https://impfdashboard.de';
 
+config.widgetFamily ||= 'medium'
 let data = await loadData();
 let chart = await loadChart();
 
 const headerStack = widget.addStack();
-headerStack.setPadding(0, horizontalPadding, 0, horizontalPadding);
 const header = headerStack.addText('💉 Impfdashboard'.toUpperCase());
 header.font = Font.mediumSystemFont(10);
 
 widget.addSpacer(4);
 
-const hStack = widget.addStack();
-hStack.setPadding(0, horizontalPadding, 0, horizontalPadding);
-hStack.layoutHorizontally();
-
-const firstStack = hStack.addStack();
-firstStack.layoutVertically();
-const firstTitle = firstStack.addText(data.firstVaccinations.title);
-firstTitle.font = Font.mediumSystemFont(10);
-const firstValue = firstStack.addText(data.firstVaccinations.stringValue);
-firstValue.font = Font.mediumSystemFont(16);
-firstValue.textColor = new Color('#3392C5');
-
-hStack.addSpacer();
-
-const fullStack = hStack.addStack();
-fullStack.layoutVertically();
-const fullTitle = fullStack.addText(data.fullVaccinations.title);
-fullTitle.font = Font.mediumSystemFont(10);
-const fullValue = fullStack.addText(data.fullVaccinations.stringValue);
-fullValue.font = Font.mediumSystemFont(16);
-fullValue.textColor = new Color('#3392C5');
-
-widget.addImage(chart).centerAlignImage();
-
-const todayValue = widget.addText(data.dosesToday.stringValue);
-todayValue.centerAlignText();
-todayValue.font = Font.mediumSystemFont(16);
-todayValue.textColor = new Color('#3392C5');
-const todayTitle = widget.addText(data.dosesToday.title);
-todayTitle.centerAlignText();
-todayTitle.font = Font.mediumSystemFont(10);
+buildLayout(widget)
 
 Script.setWidget(widget);
 Script.complete();
-widget.presentSmall();
+widget.presentMedium();
+
+function buildLayout(widget) {
+  switch(config.widgetFamily) {
+    case 'large':
+      
+      break;
+    case 'medium':
+      const outerHStack = widget.addStack();
+      const vStack = outerHStack.addStack();
+      vStack.layoutVertically();
+      createStack(vStack, data.firstVaccinations);
+      vStack.addSpacer();
+      createStack(vStack, data.fullVaccinations);
+      const secondaryStack = outerHStack.addStack();
+      secondaryStack.layoutVertically();
+  
+      secondaryStack.addImage(chart);
+      // image.centerAlignImage()      
+      const mediumPadded = outerVStack.addStack();
+      mediumPadded.addSpacer();
+      createStack(mediumPadded, data.dosesToday, true, true);
+      mediumPadded.addSpacer();
+  
+      break;
+    default:
+      const outerVStack = widget.addStack()
+      outerVStack.layoutVertically();
+      outerVStack.centerAlignContent();      
+      const hStack = outerVStack.addStack();      
+      createStack(hStack, data.firstVaccinations);
+      hStack.addSpacer();
+      createStack(hStack, data.fullVaccinations);
+      outerVStack.addImage(chart)
+      // image.centerAlignImage()      
+      const padded = outerVStack.addStack();
+      padded.addSpacer();
+      createStack(padded, data.dosesToday, true, true);
+      padded.addSpacer();
+      break;
+  }
+}
+
+function createStack(superView, data, inverse = false, centerAlignText = false) {
+  let vStack = superView.addStack();
+  vStack.layoutVertically();
+  if (inverse == false) {
+    const title = vStack.addText(data.title);
+    title.font = titleFont;
+    if (centerAlignText) {
+      title.centerAlignText();
+    }
+  }
+  const value = vStack.addText(data.stringValue);
+  value.font = valueFont;
+  value.textColor = new Color('#3392C5');
+  if (centerAlignText) {
+    value.centerAlignText()
+  }
+  if (inverse) {
+    const title = vStack.addText(data.title);
+    title.font = titleFont;
+    if (centerAlignText) {
+      title.centerAlignText();
+    }
+  }
+  
+  return vStack;
+}
 
 async function loadData() {
   const url = 'https://github.com/DerLobi/impfdashboard-scriptable-widget/raw/main/data/data.json';

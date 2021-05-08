@@ -33,12 +33,17 @@ const verticalPadding = 8;
 const titleFont = Font.mediumSystemFont( config.widgetFamily == "large" ? 16 : 10 )
 const valueFont = Font.mediumSystemFont( config.widgetFamily == "large" ? 22 : 16 )
 
+const lightBlue = new Color('#9DCCE5')
+const darkBlue = new Color('#3392C5')
+
+const dateFormatter = new DateFormatter()
+dateFormatter.dateFormat = 'E'
+
 widget.setPadding(verticalPadding, horizontalPadding, verticalPadding, horizontalPadding);
 widget.url = 'https://impfdashboard.de';
 
-config.widgetFamily ||= 'medium'
+config.widgetFamily ||= 'small'
 let data = await loadData();
-let chart = await loadChart();
 
 const headerStack = widget.addStack();
 const header = headerStack.addText('💉 Impfdashboard'.toUpperCase());
@@ -50,9 +55,12 @@ buildLayout(widget)
 
 Script.setWidget(widget);
 Script.complete();
-widget.presentMedium();
+widget.presentSmall();
 
 function buildLayout(widget) {
+
+  let chart = createChart(data.dosesLastWeeks, config.widgetFamily);
+
   switch(config.widgetFamily) {
     case 'large':
       
@@ -83,7 +91,7 @@ function buildLayout(widget) {
       createStack(hStack, data.firstVaccinations);
       hStack.addSpacer();
       createStack(hStack, data.fullVaccinations);
-      outerVStack.addImage(chart)
+      outerVStack.addImage(chart);
       // image.centerAlignImage()      
       const padded = outerVStack.addStack();
       padded.addSpacer();
@@ -105,7 +113,7 @@ function createStack(superView, data, inverse = false, centerAlignText = false) 
   }
   const value = vStack.addText(data.stringValue);
   value.font = valueFont;
-  value.textColor = new Color('#3392C5');
+  value.textColor = darkBlue;
   if (centerAlignText) {
     value.centerAlignText()
   }
@@ -153,14 +161,79 @@ async function loadData() {
       }),
       stringValue: `+${lastRecord.dosen_differenz_zum_vortag.toLocaleString()}`,
     },
+    dosesLastWeeks: records.map( record => {
+      return { 
+        date: record.date,
+        dosen_differenz_zum_vortag: record.dosen_differenz_zum_vortag 
+      } 
+    })
   };
 
   return data;
 }
 
-async function loadChart() {
-  const url = 'https://github.com/DerLobi/impfdashboard-scriptable-widget/raw/main/data/barChart.png';
-  const request = new Request(url);
-  const image = await request.loadImage();
+function createChart(data, widgetFamily) {
+  
+  let size = new Size(400, 120);
+  let dataSeries = data
+
+  switch(widgetFamily) {
+    case 'large':
+      size = new Size(800, 240)
+    case 'medium':
+      size = new Size(400, 240);
+      dataSeries = data.slice(data.length - 7, data.length);
+    default:
+      dataSeries = data.slice(data.length - 7, data.length);
+      break;
+  }
+
+  const ctx = new DrawContext();
+  ctx.opaque = false;
+  ctx.respectScreenScale = true;
+  ctx.size = size;
+
+  let sorted = [...dataSeries];  
+  sorted.sort(function (lhs, rhs) {
+    return rhs.dosen_differenz_zum_vortag - lhs.dosen_differenz_zum_vortag;
+  }); 
+  const maximum = sorted[0].dosen_differenz_zum_vortag;
+
+  const textHeight = 20
+  const availableHeight = size.height - textHeight
+  const spacing = 4;
+  const barWidth = (size.width - ((dataSeries.length - 1) * spacing)) / dataSeries.length;
+
+  ctx.setFont(Font.mediumSystemFont(18))
+  ctx.setTextColor(Color.gray())
+  ctx.setTextAlignedCenter()
+  
+  for (i = 0; i < dataSeries.length; i++) { 
+    let day = dataSeries[i]    
+    let path = new Path()
+    let x = (i * spacing + i * barWidth )
+    let value = day.dosen_differenz_zum_vortag;
+    let heightFactor = value / maximum
+    let barHeight = heightFactor * availableHeight    
+    let rect = new Rect(x, size.height - barHeight, barWidth, barHeight)    
+    path.addRoundedRect(rect, 4, 4)
+    ctx.addPath(path)
+
+    if(i == dataSeries.length -1) {
+      ctx.setFillColor(darkBlue)
+    } else {
+      ctx.setFillColor(lightBlue)
+    }
+
+    ctx.fillPath()
+
+    let textRect = new Rect(x, size.height - barHeight - textHeight - 2, barWidth, textHeight)
+    let date = new Date(day.date)    
+    let formattedDate = dateFormatter.string(date)
+
+    ctx.drawTextInRect(dateFormatter.string(date), textRect)
+  }
+
+  let image = ctx.getImage();
   return image;
 }

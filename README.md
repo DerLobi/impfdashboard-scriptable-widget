@@ -9,6 +9,7 @@ This repo gets the current data of COVID-19 vaccinations in Germany from [impfda
 * percentage of first vaccinations
 * percentage of fully vaccinated people
 * amount of doses administered in the last day
+* total cumulative amount of doses administered (large widget only)
 * a bar chart of doses for the last seven days
 
 

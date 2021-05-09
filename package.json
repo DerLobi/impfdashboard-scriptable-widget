@@ -19,9 +19,7 @@
   "homepage": "https://github.com/DerLobi/impfdashboard-scriptable-widget#readme",
   "dependencies": {
     "@actions/core": "^1.2.7",
-    "csv-parse": "^4.15.4",
-    "sharp": "^0.28.1",
-    "vega": "^5.20.2"
+    "csv-parse": "^4.15.4"
   },
   "devDependencies": {
     "eslint": "^7.25.0",

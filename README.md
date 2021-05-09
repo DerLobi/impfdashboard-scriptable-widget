@@ -1,7 +1,7 @@
 [![Generate Data](https://github.com/DerLobi/impfdashboard-scriptable-widget/actions/workflows/main.yml/badge.svg)](https://github.com/DerLobi/impfdashboard-scriptable-widget/actions/workflows/main.yml)
 # Impfdashboard Widget
 
-<img width=300 src="screenshot.png" />
+<img width=440 src="screenshot.png" />
 
 
 This repo gets the current data of COVID-19 vaccinations in Germany from [impfdashboard.de](https://impfdashboard.de) and allows you to display it as an iOS widget. It shows the following data:

@@ -30,8 +30,10 @@ const { locale } = Device;
 const horizontalPadding = 12;
 const verticalPadding = 8;
 
-const titleFont = Font.mediumSystemFont( config.widgetFamily == "large" ? 16 : 10 )
-const valueFont = Font.mediumSystemFont( config.widgetFamily == "large" ? 22 : 16 )
+config.widgetFamily ||= 'large'
+
+const titleFont = Font.mediumSystemFont( config.widgetFamily == "large" ? 12 : 10 )
+const valueFont = Font.mediumSystemFont( config.widgetFamily == "large" ? 20 : 16 )
 
 const lightBlue = new Color('#9DCCE5')
 const darkBlue = new Color('#3392C5')
@@ -42,7 +44,7 @@ dateFormatter.dateFormat = 'E'
 widget.setPadding(verticalPadding, horizontalPadding, verticalPadding, horizontalPadding);
 widget.url = 'https://impfdashboard.de';
 
-config.widgetFamily ||= 'small'
+
 let data = await loadData();
 
 const headerStack = widget.addStack();
@@ -55,7 +57,7 @@ buildLayout(widget)
 
 Script.setWidget(widget);
 Script.complete();
-widget.presentSmall();
+widget.presentLarge();
 
 function buildLayout(widget) {
 
@@ -63,21 +65,43 @@ function buildLayout(widget) {
 
   switch(config.widgetFamily) {
     case 'large':
+      const largeOuterVStack = widget.addStack()
+      largeOuterVStack.layoutVertically();
+      largeOuterVStack.centerAlignContent();
+      largeOuterVStack.addSpacer();
+      const largeHStack = largeOuterVStack.addStack();
+      largeHStack.setPadding(0, 16, 0, 16);
+      createStack(largeHStack, data.firstVaccinations);
+      largeHStack.addSpacer();
+      createStack(largeHStack, data.dosesCumulative);
+      largeHStack.addSpacer();
+      createStack(largeHStack, data.fullVaccinations);
+      largeOuterVStack.addSpacer();
+      largeOuterVStack.addImage(chart).centerAlignImage();
+      
+      const largePadded = largeOuterVStack.addStack();
+      largePadded.setPadding(16, 0, 16, 0);
+      largePadded.addSpacer();
+      createStack(largePadded, data.dosesToday, true, true);
+      largePadded.addSpacer();
       
       break;
     case 'medium':
       const outerHStack = widget.addStack();
+      
       const vStack = outerHStack.addStack();
+      vStack.setPadding(verticalPadding, 0, verticalPadding, 0);
       vStack.layoutVertically();
       createStack(vStack, data.firstVaccinations);
-      vStack.addSpacer();
+      vStack.addSpacer(verticalPadding);
       createStack(vStack, data.fullVaccinations);
+      outerHStack.addSpacer(horizontalPadding);
       const secondaryStack = outerHStack.addStack();
       secondaryStack.layoutVertically();
   
       secondaryStack.addImage(chart);
-      // image.centerAlignImage()      
-      const mediumPadded = outerVStack.addStack();
+      secondaryStack.addSpacer();
+      const mediumPadded = secondaryStack.addStack();
       mediumPadded.addSpacer();
       createStack(mediumPadded, data.dosesToday, true, true);
       mediumPadded.addSpacer();
@@ -92,7 +116,7 @@ function buildLayout(widget) {
       hStack.addSpacer();
       createStack(hStack, data.fullVaccinations);
       outerVStack.addImage(chart);
-      // image.centerAlignImage()      
+         
       const padded = outerVStack.addStack();
       padded.addSpacer();
       createStack(padded, data.dosesToday, true, true);
@@ -104,6 +128,9 @@ function buildLayout(widget) {
 function createStack(superView, data, inverse = false, centerAlignText = false) {
   let vStack = superView.addStack();
   vStack.layoutVertically();
+  if (centerAlignText) {
+    vStack.centerAlignContent()
+  }
   if (inverse == false) {
     const title = vStack.addText(data.title);
     title.font = titleFont;
@@ -152,6 +179,10 @@ async function loadData() {
         maximumFractionDigits: 2,
       }),
     },
+    dosesCumulative: {
+      title: "Verabreichte\nImpfdosen",
+      stringValue: new Intl.NumberFormat(locale, { notation: "compact", compactDisplay: "short", maximumFractionDigits: 1 }).format(lastRecord.dosen_kumulativ)
+    },
     dosesToday: {
       title: new Date(lastRecord.date).toLocaleString(locale, {
         weekday: 'long',
@@ -164,7 +195,7 @@ async function loadData() {
     dosesLastWeeks: records.map( record => {
       return { 
         date: record.date,
-        dosen_differenz_zum_vortag: record.dosen_differenz_zum_vortag 
+        amount: record.dosen_differenz_zum_vortag 
       } 
     })
   };
@@ -179,10 +210,12 @@ function createChart(data, widgetFamily) {
 
   switch(widgetFamily) {
     case 'large':
-      size = new Size(800, 240)
+      size = new Size(800, 400)
+      break;
     case 'medium':
-      size = new Size(400, 240);
+      size = new Size(640, 240);
       dataSeries = data.slice(data.length - 7, data.length);
+      break;
     default:
       dataSeries = data.slice(data.length - 7, data.length);
       break;
@@ -193,11 +226,11 @@ function createChart(data, widgetFamily) {
   ctx.respectScreenScale = true;
   ctx.size = size;
 
-  let sorted = [...dataSeries];  
+  let sorted = [...dataSeries];
   sorted.sort(function (lhs, rhs) {
-    return rhs.dosen_differenz_zum_vortag - lhs.dosen_differenz_zum_vortag;
-  }); 
-  const maximum = sorted[0].dosen_differenz_zum_vortag;
+    return rhs.amount - lhs.amount;
+  });
+  const maximum = sorted[0].amount;
 
   const textHeight = 20
   const availableHeight = size.height - textHeight
@@ -212,7 +245,7 @@ function createChart(data, widgetFamily) {
     let day = dataSeries[i]    
     let path = new Path()
     let x = (i * spacing + i * barWidth )
-    let value = day.dosen_differenz_zum_vortag;
+    let value = day.amount;
     let heightFactor = value / maximum
     let barHeight = heightFactor * availableHeight    
     let rect = new Rect(x, size.height - barHeight, barWidth, barHeight)    
@@ -234,6 +267,7 @@ function createChart(data, widgetFamily) {
     ctx.drawTextInRect(dateFormatter.string(date), textRect)
   }
 
-  let image = ctx.getImage();
+  let image = ctx.getImage();  
+  
   return image;
 }

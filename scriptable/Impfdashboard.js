@@ -187,8 +187,8 @@ async function loadData() {
       title: new Date(lastRecord.date).toLocaleString(locale, {
         weekday: 'long',
         year: '2-digit',
-        month: 'numeric',
-        day: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
       }),
       stringValue: `+${lastRecord.dosen_differenz_zum_vortag.toLocaleString()}`,
     },

@@ -17,8 +17,7 @@ This repo gets the current data of COVID-19 vaccinations in Germany from [impfda
 
 - Download the free [Scriptable app](https://scriptable.app) made by Simon Støvring
 - create a new script and copy/paste the contents from [scriptable/Impfdashboard.js](./scriptable/Impfdashboard.js)
-- Download [this file](https://raw.githubusercontent.com/DerLobi/impfdashboard-scriptable-widget/feature/scriptable-file/scriptable/Impfdashboard.scriptable)
-
+- Download [this file](https://raw.githubusercontent.com/DerLobi/impfdashboard-scriptable-widget/feature/scriptable-file/scriptable/Impfdashboard.js)
 - create a new Scriptable widget on your homescreen and choose the script you just created in the edit screen
 
 ## Credits

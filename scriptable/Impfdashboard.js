@@ -27,35 +27,35 @@
 
 const localizedStrings = {
   'first.vaccinations': {
-    'de': 'Mindestens\nErstgeimpfte',
-    'en': 'At least first\nvaccinations'
+    de: 'Mindestens\nErstgeimpfte',
+    en: 'At least first\nvaccinations',
   },
   'cumulative.doses': {
-    'de': 'Verabreichte\nImpfdosen',
-    'en': 'Administered\ndoses'
+    de: 'Verabreichte\nImpfdosen',
+    en: 'Administered\ndoses',
   },
   'fully.vaccinated': {
-    'de': 'Vollständig\nGeimpfte',
-    'en': 'Fully\nvaccinated'
-  }
+    de: 'Vollständig\nGeimpfte',
+    en: 'Fully\nvaccinated',
+  },
 
-}
+};
 
 const widget = new ListWidget();
 const { locale, language } = Device;
 const horizontalPadding = 12;
 const verticalPadding = 8;
 
-config.widgetFamily ||= 'large'
+config.widgetFamily ||= 'large';
 
-const titleFont = Font.mediumSystemFont( config.widgetFamily == "large" ? 12 : 10 )
-const valueFont = Font.mediumSystemFont( config.widgetFamily == "large" ? 20 : 16 )
+const titleFont = Font.mediumSystemFont(config.widgetFamily == 'large' ? 12 : 10);
+const valueFont = Font.mediumSystemFont(config.widgetFamily == 'large' ? 20 : 16);
 
-const lightBlue = new Color('#9DCCE5')
-const darkBlue = new Color('#3392C5')
+const lightBlue = new Color('#9DCCE5');
+const darkBlue = new Color('#3392C5');
 
-const dateFormatter = new DateFormatter()
-dateFormatter.dateFormat = 'E'
+const dateFormatter = new DateFormatter();
+dateFormatter.dateFormat = 'E';
 
 widget.setPadding(verticalPadding, horizontalPadding, verticalPadding, horizontalPadding);
 widget.url = 'https://impfdashboard.de';
@@ -69,19 +69,18 @@ header.font = Font.mediumSystemFont(10);
 
 widget.addSpacer(4);
 
-buildLayout(widget)
+buildLayout(widget);
 
 Script.setWidget(widget);
 Script.complete();
 widget.presentLarge();
 
 function buildLayout(widget) {
+  const chart = createChart(data.dosesLastWeeks, config.widgetFamily);
 
-  let chart = createChart(data.dosesLastWeeks, config.widgetFamily);
-
-  switch(config.widgetFamily) {
+  switch (config.widgetFamily) {
     case 'large':
-      const largeOuterVStack = widget.addStack()
+      const largeOuterVStack = widget.addStack();
       largeOuterVStack.layoutVertically();
       largeOuterVStack.centerAlignContent();
       largeOuterVStack.addSpacer();
@@ -94,17 +93,17 @@ function buildLayout(widget) {
       createStack(largeHStack, data.fullVaccinations);
       largeOuterVStack.addSpacer();
       largeOuterVStack.addImage(chart).centerAlignImage();
-      
+
       const largePadded = largeOuterVStack.addStack();
       largePadded.setPadding(16, 0, 16, 0);
       largePadded.addSpacer();
       createStack(largePadded, data.dosesToday, true, true);
       largePadded.addSpacer();
-      
+
       break;
     case 'medium':
       const outerHStack = widget.addStack();
-      
+
       const vStack = outerHStack.addStack();
       vStack.setPadding(verticalPadding, 0, verticalPadding, 0);
       vStack.layoutVertically();
@@ -114,25 +113,25 @@ function buildLayout(widget) {
       outerHStack.addSpacer(horizontalPadding);
       const secondaryStack = outerHStack.addStack();
       secondaryStack.layoutVertically();
-  
+
       secondaryStack.addImage(chart);
       secondaryStack.addSpacer();
       const mediumPadded = secondaryStack.addStack();
       mediumPadded.addSpacer();
       createStack(mediumPadded, data.dosesToday, true, true);
       mediumPadded.addSpacer();
-  
+
       break;
     default:
-      const outerVStack = widget.addStack()
+      const outerVStack = widget.addStack();
       outerVStack.layoutVertically();
-      outerVStack.centerAlignContent();      
-      const hStack = outerVStack.addStack();      
+      outerVStack.centerAlignContent();
+      const hStack = outerVStack.addStack();
       createStack(hStack, data.firstVaccinations);
       hStack.addSpacer();
       createStack(hStack, data.fullVaccinations);
       outerVStack.addImage(chart);
-         
+
       const padded = outerVStack.addStack();
       padded.addSpacer();
       createStack(padded, data.dosesToday, true, true);
@@ -142,10 +141,10 @@ function buildLayout(widget) {
 }
 
 function createStack(superView, data, inverse = false, centerAlignText = false) {
-  let vStack = superView.addStack();
+  const vStack = superView.addStack();
   vStack.layoutVertically();
   if (centerAlignText) {
-    vStack.centerAlignContent()
+    vStack.centerAlignContent();
   }
   if (inverse == false) {
     const title = vStack.addText(data.title);
@@ -158,7 +157,7 @@ function createStack(superView, data, inverse = false, centerAlignText = false) 
   value.font = valueFont;
   value.textColor = darkBlue;
   if (centerAlignText) {
-    value.centerAlignText()
+    value.centerAlignText();
   }
   if (inverse) {
     const title = vStack.addText(data.title);
@@ -167,7 +166,7 @@ function createStack(superView, data, inverse = false, centerAlignText = false) 
       title.centerAlignText();
     }
   }
-  
+
   return vStack;
 }
 
@@ -197,7 +196,7 @@ async function loadData() {
     },
     dosesCumulative: {
       title: localized('cumulative.doses'),
-      stringValue: new Intl.NumberFormat(locale, { notation: "compact", compactDisplay: "short", maximumFractionDigits: 1 }).format(lastRecord.dosen_kumulativ)
+      stringValue: new Intl.NumberFormat(locale, { notation: 'compact', compactDisplay: 'short', maximumFractionDigits: 1 }).format(lastRecord.dosen_kumulativ),
     },
     dosesToday: {
       title: new Date(lastRecord.date).toLocaleString(locale, {
@@ -208,25 +207,22 @@ async function loadData() {
       }),
       stringValue: `+${lastRecord.dosen_differenz_zum_vortag.toLocaleString()}`,
     },
-    dosesLastWeeks: records.map( record => {
-      return { 
-        date: record.date,
-        amount: record.dosen_differenz_zum_vortag 
-      } 
-    })
+    dosesLastWeeks: records.map((record) => ({
+      date: record.date,
+      amount: record.dosen_differenz_zum_vortag,
+    })),
   };
 
   return data;
 }
 
 function createChart(data, widgetFamily) {
-  
   let size = new Size(400, 120);
-  let dataSeries = data
+  let dataSeries = data;
 
-  switch(widgetFamily) {
+  switch (widgetFamily) {
     case 'large':
-      size = new Size(800, 400)
+      size = new Size(800, 400);
       break;
     case 'medium':
       size = new Size(640, 240);
@@ -242,55 +238,53 @@ function createChart(data, widgetFamily) {
   ctx.respectScreenScale = true;
   ctx.size = size;
 
-  let sorted = [...dataSeries];
-  sorted.sort(function (lhs, rhs) {
-    return rhs.amount - lhs.amount;
-  });
+  const sorted = [...dataSeries];
+  sorted.sort((lhs, rhs) => rhs.amount - lhs.amount);
   const maximum = sorted[0].amount;
 
-  const textHeight = 20
-  const availableHeight = size.height - textHeight
+  const textHeight = 20;
+  const availableHeight = size.height - textHeight;
   const spacing = 4;
   const barWidth = (size.width - ((dataSeries.length - 1) * spacing)) / dataSeries.length;
 
-  ctx.setFont(Font.mediumSystemFont(18))
-  ctx.setTextColor(Color.gray())
-  ctx.setTextAlignedCenter()
-  
-  for (i = 0; i < dataSeries.length; i++) { 
-    let day = dataSeries[i]    
-    let path = new Path()
-    let x = (i * spacing + i * barWidth )
-    let value = day.amount;
-    let heightFactor = value / maximum
-    let barHeight = heightFactor * availableHeight    
-    let rect = new Rect(x, size.height - barHeight, barWidth, barHeight)    
-    path.addRoundedRect(rect, 4, 4)
-    ctx.addPath(path)
+  ctx.setFont(Font.mediumSystemFont(18));
+  ctx.setTextColor(Color.gray());
+  ctx.setTextAlignedCenter();
 
-    if(i == dataSeries.length -1) {
-      ctx.setFillColor(darkBlue)
+  for (i = 0; i < dataSeries.length; i++) {
+    const day = dataSeries[i];
+    const path = new Path();
+    const x = (i * spacing + i * barWidth);
+    const value = day.amount;
+    const heightFactor = value / maximum;
+    const barHeight = heightFactor * availableHeight;
+    const rect = new Rect(x, size.height - barHeight, barWidth, barHeight);
+    path.addRoundedRect(rect, 4, 4);
+    ctx.addPath(path);
+
+    if (i == dataSeries.length - 1) {
+      ctx.setFillColor(darkBlue);
     } else {
-      ctx.setFillColor(lightBlue)
+      ctx.setFillColor(lightBlue);
     }
 
-    ctx.fillPath()
+    ctx.fillPath();
 
-    let textRect = new Rect(x, size.height - barHeight - textHeight - 2, barWidth, textHeight)
-    let date = new Date(day.date)    
-    let formattedDate = dateFormatter.string(date)
+    const textRect = new Rect(x, size.height - barHeight - textHeight - 2, barWidth, textHeight);
+    const date = new Date(day.date);
+    const formattedDate = dateFormatter.string(date);
 
-    ctx.drawTextInRect(dateFormatter.string(date), textRect)
+    ctx.drawTextInRect(dateFormatter.string(date), textRect);
   }
 
-  let image = ctx.getImage();  
-  
+  const image = ctx.getImage();
+
   return image;
 }
 
-function localized(key) {  
+function localized(key) {
   if (localizedStrings[key] == null) {
-    return key
+    return key;
   }
-  return localizedStrings[key][language] || localizedStrings[key]['en']
+  return localizedStrings[key][language] || localizedStrings[key].en;
 }

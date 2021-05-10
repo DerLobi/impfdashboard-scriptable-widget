@@ -286,5 +286,5 @@ function localized(key) {
   if (localizedStrings[key] == null) {
     return key;
   }
-  return localizedStrings[key][language] || localizedStrings[key].en;
+  return localizedStrings[key][language()] || localizedStrings[key].en;
 }

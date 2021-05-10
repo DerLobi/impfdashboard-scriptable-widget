@@ -25,8 +25,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+const localizedStrings = {
+  'first.vaccinations': {
+    'de': 'Mindestens\nErstgeimpfte',
+    'en': 'At least first\nvaccinations'
+  },
+  'cumulative.doses': {
+    'de': 'Verabreichte\nImpfdosen',
+    'en': 'Administered\ndoses'
+  },
+  'fully.vaccinated': {
+    'de': 'Vollständig\nGeimpfte',
+    'en': 'Fully\nvaccinated'
+  }
+
+}
+
 const widget = new ListWidget();
-const { locale } = Device;
+const { locale, language } = Device;
 const horizontalPadding = 12;
 const verticalPadding = 8;
 
@@ -164,7 +180,7 @@ async function loadData() {
 
   const data = {
     firstVaccinations: {
-      title: 'Mindestens\nErstgeimpfte',
+      title: localized('first.vaccinations'),
       stringValue: lastRecord.impf_quote_erst.toLocaleString(locale, {
         style: 'percent',
         minimumFractionDigits: 0,
@@ -172,7 +188,7 @@ async function loadData() {
       }),
     },
     fullVaccinations: {
-      title: 'Vollständig\nGeimpfte',
+      title: localized('fully.vaccinated'),
       stringValue: lastRecord.impf_quote_voll.toLocaleString(locale, {
         style: 'percent',
         minimumFractionDigits: 0,
@@ -180,7 +196,7 @@ async function loadData() {
       }),
     },
     dosesCumulative: {
-      title: "Verabreichte\nImpfdosen",
+      title: localized('cumulative.doses'),
       stringValue: new Intl.NumberFormat(locale, { notation: "compact", compactDisplay: "short", maximumFractionDigits: 1 }).format(lastRecord.dosen_kumulativ)
     },
     dosesToday: {
@@ -270,4 +286,11 @@ function createChart(data, widgetFamily) {
   let image = ctx.getImage();  
   
   return image;
+}
+
+function localized(key) {  
+  if (localizedStrings[key] == null) {
+    return key
+  }
+  return localizedStrings[key][language] || localizedStrings[key]['en']
 }

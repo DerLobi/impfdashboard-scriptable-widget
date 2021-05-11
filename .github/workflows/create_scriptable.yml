@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  generateData:
+  createScriptableFile:
     runs-on: ubuntu-latest
 
     steps:

@@ -1,4 +1,5 @@
-# This is a basic workflow to help you get started with Actions
+# This fetches a TSV file from Impfdashboard.de, extracts the relevant data and stores it as JSON
+# It runs every 2 hours, and if there were changes they will be committed.
 
 name: Generate Data
 
@@ -24,7 +25,7 @@ jobs:
       - name: Set up locale
         uses: sarisia/setup-icu@v1
       - name: Generate Data
-        uses: ./
+        uses: ./actions/generate_data/
       - name: Commit Changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

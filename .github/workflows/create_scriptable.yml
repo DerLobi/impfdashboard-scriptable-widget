@@ -1,0 +1,29 @@
+# This converts the Impfdashboard.js file to a Impfdashboard.scriptable file which is easier for users to import
+
+name: Create .scriptable file
+
+on:
+  push:
+    branches:
+      - main
+      
+  workflow_dispatch:
+
+jobs:
+  generateData:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Set up locale
+        uses: sarisia/setup-icu@v1
+      - name: Create *.scriptable file
+        uses: ./actions/create_scriptable/
+      - name: Commit Changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update Data
+          file_pattern: data/*

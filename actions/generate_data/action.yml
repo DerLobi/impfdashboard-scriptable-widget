@@ -1,0 +1,5 @@
+name: 'Convert Impfdashboard data'
+description: 'Converts the .js file to a .scriptable file'
+runs:
+  using: 'node12'
+  main: '../../src/createScriptable.js'

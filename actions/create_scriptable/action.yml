@@ -1,0 +1,5 @@
+name: 'Convert Impfdashboard data'
+description: 'Downloads TSV formatted data, extracts relevant data and converts it to JSON.'
+runs:
+  using: 'node12'
+  main: '../../src/index.js'

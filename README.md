@@ -1,4 +1,4 @@
-[![Generate Data](https://github.com/DerLobi/impfdashboard-scriptable-widget/actions/workflows/main.yml/badge.svg)](https://github.com/DerLobi/impfdashboard-scriptable-widget/actions/workflows/main.yml)
+[![Generate Data](https://github.com/DerLobi/impfdashboard-scriptable-widget/actions/workflows/generate_data.yml/badge.svg)](https://github.com/DerLobi/impfdashboard-scriptable-widget/actions/workflows/generate_data.yml)
 # Impfdashboard Widget
 
 <img width=440 src="screenshot.png" />

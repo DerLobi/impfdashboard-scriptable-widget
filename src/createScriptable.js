@@ -2,9 +2,9 @@ const fs = require('fs');
 const core = require('@actions/core');
 
 try {
-  const scriptable = JSON.parse(fs.readFileSync('../../scriptable/Impfdashboard.scriptable', 'utf8'));
+  const scriptable = JSON.parse(fs.readFileSync('./scriptable/Impfdashboard.scriptable', 'utf8'));
 
-  const originalScript = fs.readFileSync('../../scriptable/Impfdashboard.js', 'utf8');
+  const originalScript = fs.readFileSync('./scriptable/Impfdashboard.js', 'utf8');
   let output = originalScript.split('\n');
 
   for (let i = 0; i < 3; i += 1) {
@@ -15,7 +15,7 @@ try {
 
   scriptable.script = output;
 
-  fs.writeFileSync('../../scriptable/Impfdashboard.scriptable', JSON.stringify(scriptable));
+  fs.writeFileSync('./scriptable/Impfdashboard.scriptable', JSON.stringify(scriptable));
 } catch (err) {
   core.setFailed(err.message);
 }

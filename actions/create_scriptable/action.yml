@@ -1,5 +1,5 @@
 name: 'Convert Impfdashboard data'
-description: 'Downloads TSV formatted data, extracts relevant data and converts it to JSON.'
+description: 'Converts the .js file to a .scriptable file'
 runs:
   using: 'node12'
-  main: '../../src/index.js'
+  main: '../../src/createScriptable.js'

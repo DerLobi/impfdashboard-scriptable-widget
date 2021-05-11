@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  generate data:
+  generateData:
     runs-on: ubuntu-latest
 
     steps:

@@ -38,6 +38,10 @@ const localizedStrings = {
     de: 'Vollständig\nGeimpfte',
     en: 'Fully\nvaccinated',
   },
+  'boostered': {
+    de: 'Booster-\nGeimpfte',
+    en: 'Booster\nvaccinated',
+  }
 
 };
 
@@ -88,38 +92,46 @@ function buildLayout(widget) {
       largeHStack.setPadding(0, 16, 0, 16);
       createStack(largeHStack, data.firstVaccinations);
       largeHStack.addSpacer();
-      createStack(largeHStack, data.dosesCumulative);
-      largeHStack.addSpacer();
       createStack(largeHStack, data.fullVaccinations);
+      largeHStack.addSpacer();
+      createStack(largeHStack, data.boosterVaccinated);
       largeOuterVStack.addSpacer();
       largeOuterVStack.addImage(chart).centerAlignImage();
 
       const largePadded = largeOuterVStack.addStack();
       largePadded.setPadding(16, 0, 16, 0);
       largePadded.addSpacer();
+      createStack(largePadded, data.dosesCumulative, true, true);
+      largePadded.addSpacer();
       createStack(largePadded, data.dosesToday, true, true);
       largePadded.addSpacer();
-
       break;
     case 'medium':
       const outerHStack = widget.addStack();
 
-      const vStack = outerHStack.addStack();
-      vStack.setPadding(verticalPadding, 0, verticalPadding, 0);
-      vStack.layoutVertically();
-      createStack(vStack, data.firstVaccinations);
-      vStack.addSpacer(verticalPadding);
-      createStack(vStack, data.fullVaccinations);
-      outerHStack.addSpacer(horizontalPadding);
       const secondaryStack = outerHStack.addStack();
       secondaryStack.layoutVertically();
 
       secondaryStack.addImage(chart);
-      secondaryStack.addSpacer();
+      secondaryStack.addSpacer(4);
+
+	  const vStack = outerHStack.addStack();
+
+      vStack.layoutVertically();
+      
+      vStack.addSpacer();
+      createStack(vStack, data.dosesToday, true, true);
+      vStack.addSpacer();
+            
       const mediumPadded = secondaryStack.addStack();
+      createStack(mediumPadded, data.firstVaccinations);
       mediumPadded.addSpacer();
-      createStack(mediumPadded, data.dosesToday, true, true);
+      createStack(mediumPadded, data.fullVaccinations);
       mediumPadded.addSpacer();
+      createStack(mediumPadded, data.boosterVaccinated);
+      mediumPadded.addSpacer();
+      outerHStack.addSpacer(horizontalPadding);
+
 
       break;
     default:
@@ -176,6 +188,11 @@ async function loadData() {
   const records = await request.loadJSON();
 
   const lastRecord = records[records.length - 1];
+  
+  // RKI response does not include the % of people boostered, so we calculate it manually
+  const totalPopulation = lastRecord.personen_voll_kumulativ / lastRecord.impf_quote_voll
+  const percentBoostered = lastRecord.personen_auffrisch_kumulativ / totalPopulation
+  
 
   const data = {
     firstVaccinations: {
@@ -189,6 +206,14 @@ async function loadData() {
     fullVaccinations: {
       title: localized('fully.vaccinated'),
       stringValue: lastRecord.impf_quote_voll.toLocaleString(locale, {
+        style: 'percent',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }),
+    },
+    boosterVaccinated: {
+      title: localized('boostered'),
+      stringValue: percentBoostered.toLocaleString(locale, {
         style: 'percent',
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,

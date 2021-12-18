@@ -22,6 +22,8 @@ module.exports = function downloadData(completion) {
         dosen_differenz_zum_vortag: parseFloat(
           record.dosen_differenz_zum_vortag,
         ),
+        personen_voll_kumulativ: parseFloat(record.personen_voll_kumulativ),
+        personen_auffrisch_kumulativ: parseFloat(record.personen_auffrisch_kumulativ)
       });
     }
   });
